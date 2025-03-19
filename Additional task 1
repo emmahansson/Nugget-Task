@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <limits.h>
+
+// Function prototypes
+int findNuggetBoxesRecursive(int n, int box6, int box9, int box20, int *bestN, int *bestBox6, int *bestBox9, int *bestBox20);
+
+int main() {
+    int n;
+    printf("Enter the number of nuggets: ");
+    scanf("%d", &n);
+
+    int bestN = INT_MAX; // Start with the largest possible number
+    int bestBox6 = 0, bestBox9 = 0, bestBox20 = 0;
+
+    if (!findNuggetBoxesRecursive(n, 0, 0, 0, &bestN, &bestBox6, &bestBox9, &bestBox20)) {
+        if (bestN == INT_MAX) {
+            printf("It's not possible to pack any amount of nuggets with these boxes.\n");
+        } else {
+            printf("Unfortunately, we cannot give %d nuggets, however we can offer you %d:\n", n, bestN);
+            printf("6x Box: %d\n", bestBox6);
+            printf("9x Box: %d\n", bestBox9);
+            printf("20x Box: %d\n", bestBox20);
+        }
+    } else {
+        printf("6x Box: %d, 9x Box: %d, 20x Box: %d\n", bestBox6, bestBox9, bestBox20);
+    }
+
+    return 0;
+}
+
+// Function definitions (including the recursive function)
+int findNuggetBoxesRecursive(int n, int box6, int box9, int box20, int *bestN, int *bestBox6, int *bestBox9, int *bestBox20) {
+    int currentN = box6 * 6 + box9 * 9 + box20 * 20;
+
+    if (currentN >= n) {
+        if (currentN < *bestN) {
+            *bestN = currentN;
+            *bestBox6 = box6;
+            *bestBox9 = box9;
+            *bestBox20 = box20;
+        }
+        if(currentN == n) return 1; // if perfect match, return 1;
+    }
+
+    if (currentN > n + 100) { // added a limit to prevent infinite recursion
+        return 0;
+    }
+
+    // Try using different boxes
+    if (findNuggetBoxesRecursive(n, box6 + 1, box9, box20, bestN, bestBox6, bestBox9, bestBox20)) return 1;
+    if (findNuggetBoxesRecursive(n, box6, box9 + 1, box20, bestN, bestBox6, bestBox9, bestBox20)) return 1;
+    if (findNuggetBoxesRecursive(n, box6, box9, box20 + 1, bestN, bestBox6, bestBox9, bestBox20)) return 1;
+
+    return 0; // No solution found
+}
