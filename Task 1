@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+// Function prototypes
+int findNuggetBoxesRecursive(int n, int box6, int box9, int box20);
+
+int main() {
+    int n;
+    printf("Enter the number of nuggets: ");
+    scanf("%d", &n);
+
+    if (!findNuggetBoxesRecursive(n, 0, 0, 0)) {
+        printf("It's not possible to pack that many nuggets.\n");
+    }
+
+    return 0;
+}
+
+// Function definitions (including the recursive function)
+int findNuggetBoxesRecursive(int n, int box6, int box9, int box20) {
+    if (n == 0) {
+        printf("6x Box: %d, 9x Box: %d, 20x Box: %d\n", box6, box9, box20);
+        return 1; // Found a solution
+    }
+    if (n < 0) {
+        return 0; // Not a solution
+    }
+
+    // Try using different boxes
+    if (findNuggetBoxesRecursive(n - 20, box6, box9, box20 + 1)) return 1;
+    if (findNuggetBoxesRecursive(n - 9, box6, box9 + 1, box20)) return 1;
+    if (findNuggetBoxesRecursive(n - 6, box6 + 1, box9, box20)) return 1;
+
+    return 0; // No solution found
+}
