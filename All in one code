@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+// Function prototypes
+int findNuggetBoxesRecursive(int, int, int, int, int*, int*, int*, int*);
+bool isPossible(int);
+void printNuggetSolution(int, int, int, int, int);
+void printImpossibleNugget(int);
+
+int main() {
+    int n;
+    printf("Enter the number of nuggets: ");
+    scanf("%d", &n);
+
+    int bestN = INT_MAX;
+    int bestBox6 = 0, bestBox9 = 0, bestBox20 = 0;
+
+    if (!findNuggetBoxesRecursive(n, 0, 0, 0, &bestN, &bestBox6, &bestBox9, &bestBox20)) {
+        printNuggetSolution(n, bestN, bestBox6, bestBox9, bestBox20);
+    } else {
+        printNuggetSolution(n, n, bestBox6, bestBox9, bestBox20); //perfect solution
+    }
+
+    int maxImpossible = 0;
+    for (int i = 1; i < 100; i++) {
+        if (!isPossible(i)) {
+            maxImpossible = i;
+        }
+    }
+
+    printImpossibleNugget(maxImpossible);
+
+    return 0;
+}
+
+// Function definitions
+int findNuggetBoxesRecursive(int n, int box6, int box9, int box20, int* bestN, int* bestBox6, int* bestBox9, int* bestBox20) {
+    int currentN = box6 * 6 + box9 * 9 + box20 * 20;
+
+    if (currentN >= n) {
+        if (currentN < *bestN) {
+            *bestN = currentN;
+            *bestBox6 = box6;
+            *bestBox9 = box9;
+            *bestBox20 = box20;
+        }
+        if(currentN == n) return 1;
+    }
+
+    if (currentN > n + 100) {
+        return 0;
+    }
+
+    if (findNuggetBoxesRecursive(n, box6 + 1, box9, box20, bestN, bestBox6, bestBox9, bestBox20)) return 1;
+    if (findNuggetBoxesRecursive(n, box6, box9 + 1, box20, bestN, bestBox6, bestBox9, bestBox20)) return 1;
+    if (findNuggetBoxesRecursive(n, box6, box9, box20 + 1, bestN, bestBox6, bestBox9, bestBox20)) return 1;
+
+    return 0;
+}
+
+bool isPossible(int n) {
+    if (n < 0) return false;
+    if (n == 0) return true;
+
+    if (isPossible(n - 6) || isPossible(n - 9) || isPossible(n - 20)) {
+        return true;
+    }
+    return false;
+}
+
+void printNuggetSolution(int n, int bestN, int bestBox6, int bestBox9, int bestBox20) {
+    if (bestN == INT_MAX) {
+        printf("Unfortunately, we cannot give %d nuggets, however it is not possible to give any amount of nuggets.\n", n);
+    } else if (n != bestN) {
+        printf("Unfortunately, we cannot give %d nuggets, however we can offer you %d:\n", n, bestN);
+        printf("6x Box: %d\n", bestBox6);
+        printf("9x Box: %d\n", bestBox9);
+        printf("20x Box: %d\n", bestBox20);
+    } else {
+        printf("6x Box: %d, 9x Box: %d, 20x Box: %d\n", bestBox6, bestBox9, bestBox20);
+    }
+}
+
+void printImpossibleNugget(int maxImpossible) {
+    printf("\nThe largest number of nuggets that cannot be made is: %d\n", maxImpossible);
+}
