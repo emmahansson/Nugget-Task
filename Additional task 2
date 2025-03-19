@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Prototypes
+bool isPossible(int n);
+
+//Main function
+int main() {
+    int maxImpossible = 0;
+    for (int i = 1; i < 100; i++) {
+        if (!isPossible(i)) {
+            maxImpossible = i;
+        }
+    }
+
+    printf("The largest number of nuggets that cannot be made is: %d\n", maxImpossible);
+
+    return 0;
+}
+
+// Function definitions
+bool isPossible(int n) {
+    if (n < 0) return false;
+    if (n == 0) return true;
+
+    if (isPossible(n - 6) || isPossible(n - 9) || isPossible(n - 20)) {
+        return true;
+    }
+    return false;
+}
